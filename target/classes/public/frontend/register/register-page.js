@@ -8,12 +8,18 @@ const BASE_URL = "http://localhost:8081"; // backend URL
  * TODO: Get references to various DOM elements
  * - usernameInput, emailInput, passwordInput, repeatPasswordInput, registerButton
  */
+let username = document.getElementById("username-input");
+let email = document.getElementById("email-input");
+let password = document.getElementById("password-input");
+let repeatPassword = document.getElementById("repeat-password-input");
+let registerButton = document.getElementById("register-button");
+
 
 
 /* 
  * TODO: Ensure the register button calls processRegistration when clicked
  */
-
+registerButton.onclick = processRegistration;
 
 /**
  * TODO: Process Registration Function
