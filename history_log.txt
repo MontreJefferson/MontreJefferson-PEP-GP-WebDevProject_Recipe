@@ -1,7 +1,7 @@
-commit c10994313ea21288d22a871441a08a29064e18d1
+commit d8fa80f656e46b7b1be8d8b2b135c85251dda3f9
 Author: Montre Jefferson <Jeffersonmontre@gmail.com>
-Date:   Sun Aug 17 22:00:55 2025 +0000
+Date:   Thu Aug 21 22:25:49 2025 +0000
 
-    Project Creation & register html page implementation
+    continued html implementation and register page js
 
- 31 files changed, 43 insertions(+), 4 deletions(-)
+ 11 files changed, 149 insertions(+), 38 deletions(-)

@@ -16,14 +16,35 @@ window.addEventListener("DOMContentLoaded", () => {
      * - Admin link and logout button
      * - Search input
     */
+    let addRecipeNameField = document.getElementById("add-recipe-name-input");
+    let addRecipeInstructionsField = document.getElementById("add-recipe-instructions-input");
+    let addRecipeSubmitButton = document.getElementById("add-recipe-submit-input");
+    let updateRecipeNameField = document.getElementById("update-recipe-name-input");
+    let updateRecipeInstructionsField = document.getElementById("update-recipe-instructions-input");
+    let updateRecipeSubmitButton = document.getElementById("update-recipe-submit-input");
+    let deleteRecipeNameField = document.getElementById("delete-recipe-name-input");
+    let deleteRecpieSubmitButton = document.getElementById("delete-recipe-submit-input");
+    let recipeList = document.getElementById("recipe-list");
+    let adminLink = document.getElementById("admin-link");
+    let logoutButton = document.getElementById("logout-button");
+    let searchInputField = document.getElementById("search-input");
+    let searchButton = document.getElementById("search-button")
+
 
     /*
      * TODO: Show logout button if auth-token exists in sessionStorage
      */
 
+    if (sessionStorage.getItem('auth-token')) {
+        logoutButton.style.display = "block";
+    }
+
     /*
      * TODO: Show admin link if is-admin flag in sessionStorage is "true"
      */
+    if (sessionStorage.getItem('is-admin') === true) {
+        adminLink.style.display = "block";
+    }
 
     /*
      * TODO: Attach event handlers
@@ -33,10 +54,18 @@ window.addEventListener("DOMContentLoaded", () => {
      * - Search button → searchRecipes()
      * - Logout button → processLogout()
      */
+    addRecipeSubmitButton.addEventListener('click', addRecipe);
+    updateRecipeSubmitButton.addEventListener('click', updateRecipe);
+    deleteRecpieSubmitButton.addEventListener('click', deleteRecipe);
+    searchButton.addEventListener('click', searchRecipes);
+    logoutButton.addEventListener('click', processLogout);
+
+
 
     /*
      * TODO: On page load, call getRecipes() to populate the list
      */
+    window.onload = getRecipes();
 
 
     /**
@@ -47,7 +76,21 @@ window.addEventListener("DOMContentLoaded", () => {
      * - Handle fetch errors and alert user
      */
     async function searchRecipes() {
-        // Implement search logic here
+        let searchInput = searchInputField.value
+
+        try {
+
+            const request = new Request(`${BASE_URL}/recipes?name=${encodeURIComponent(searchInput)}`);
+
+            const response = await fetch(request)
+
+            recipes = await response.json();
+
+            refreshRecipeList();
+
+        } catch (error) {
+            console.error('Error:', error)
+        }
     }
 
     /**
@@ -59,7 +102,42 @@ window.addEventListener("DOMContentLoaded", () => {
      * - On success: clear inputs, fetch latest recipes, refresh the list
      */
     async function addRecipe() {
-        // Implement add logic here
+        let recipeName = addRecipeNameField.value;
+        let recipeInstructions = addRecipeInstructionsField.value;
+
+        if (recipeName.trim().length < 1 || recipeInstructions.trim().length < 1) {
+            //Error: Invalid fields
+            alert("Fields must all be filled")
+            throw new Error("Fields must all be filled.")
+        }
+
+        const requestBody = { name: recipeName, instructions: recipeInstructions };
+        const requestOptions = {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${sessionStorage.getItem("auth-token")}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(requestBody)
+        };
+        try {
+            const response = await fetch(`${BASE_URL}/recipes`, requestOptions);
+
+            if (response.ok) {
+                // Clear inputs
+                addRecipeInstructionsField.value = "";
+                addRecipeNameField.value = "";
+
+                //Get new recipes and refresh
+                await getRecipes();
+
+            } else {
+                console.error("Unexpected response status:", response.status);
+            }
+
+        } catch (error) {
+            console.error('Error:', error)
+        }
     }
 
     /**
@@ -71,7 +149,49 @@ window.addEventListener("DOMContentLoaded", () => {
      * - On success: clear inputs, fetch latest recipes, refresh the list
      */
     async function updateRecipe() {
-        // Implement update logic here
+        let recipeName = updateRecipeNameField.value;
+        let recipeInstructions = updateRecipeInstructionsField.value;
+
+        if(recipeName.trim().length < 1 || recipeInstructions.trim().length < 1){
+            // Error empty fields
+            throw new Error("Fields must all be filled.")
+        }
+
+        const requestOptions = {
+            method: "Put",
+            headers: {
+                "Authorization": `Bearer ${sessionStorage.getItem("auth-token")}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(recipeInstructions)
+        };
+
+        try {
+            const searchResponse = await fetch(`${BASE_URL}/recipes?name=${encodeURIComponent(recipeName)}`);
+
+            const recipes = await searchResponse.json();
+
+            const updateResponse = await fetch(`${BASE_URL}/recipes/${recipes.id}`, requestOptions)
+
+            const updatedRecipe = await updateResponse.json();
+
+            console.log("Updated recipe:", updatedRecipe);
+
+            if (updateResponse.ok) {
+                // Clear inputs
+                updateRecipeNameField.value = "";
+                updateRecipeInstructionsField.value = "";
+
+                // Get new recipes and refresh
+                await getRecipes;
+
+            } else {
+                console.error("Unexpected response status:", response.status);
+            }
+
+        } catch (error) {
+            console.error('Error:', error)
+        }
     }
 
     /**
@@ -82,7 +202,37 @@ window.addEventListener("DOMContentLoaded", () => {
      * - On success: refresh the list
      */
     async function deleteRecipe() {
-        // Implement delete logic here
+        let recipeName = deleteRecipeNameField.value;
+        
+        if(recipeName.trim().length < 1){
+            // Error empty fields
+            throw new Error("Fields must all be filled.")
+        }
+
+        const requestOptions = {
+            method: "DELETE",
+            headers: {
+                "Authorization": `Bearer ${sessionStorage.getItem("auth-token")}`,
+                "Content-Type": "application/json"
+            },
+        };
+
+        try {
+            const request = await fetch(`${BASE_URL}/recipes?name=${encodeURIComponent(recipeName)}`, requestOptions)
+
+            if (request.ok) {
+                // Clear inputs
+                deleteRecipeNameField.value = "";
+
+                // refresh the list
+                refreshRecipeList();
+
+            } else {
+                console.error("Unexpected response status:", request.status);
+            }
+        } catch (error) {
+            console.error('Error:', error)
+        }
     }
 
     /**
@@ -92,7 +242,25 @@ window.addEventListener("DOMContentLoaded", () => {
      * - Call refreshRecipeList() to display
      */
     async function getRecipes() {
-        // Implement get logic here
+
+        const requestOptions = {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${sessionStorage.getItem("auth-token")}`,
+                "Content-Type": "application/json"
+            },
+        };
+
+        try {
+            const request = await fetch(`${BASE_URL}/recipes`, requestOptions)
+
+            recipes = await request.json();
+
+            refreshRecipeList();
+
+        } catch (error) {
+            console.error('Error:', error)
+        }
     }
 
     /**
@@ -102,7 +270,15 @@ window.addEventListener("DOMContentLoaded", () => {
      * - Append to list container
      */
     function refreshRecipeList() {
-        // Implement refresh logic here
+        //Clear list
+        recipeList.innerHTML = "";
+
+        //Create <li> elements and append to list container
+        recipes.forEach(item => {
+            const li = document.createElement("li");
+            li.textContent = item;
+            recipeList.appendChild(li);
+        });
     }
 
     /**
@@ -113,7 +289,30 @@ window.addEventListener("DOMContentLoaded", () => {
      * - On failure: alert the user
      */
     async function processLogout() {
-        // Implement logout logic here
-    }
+        const requestOptions = {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${sessionStorage.getItem("auth-token")}`,
+                "Content-Type": "application/json"
+            },
+        };
 
+        try {
+            const request = await fetch(`/logout`, requestOptions)
+
+            if (request.ok) {
+                // Clear session storage
+                sessionStorage.clear;
+
+                // Send to login page
+                location.replace = "/login";
+
+            } else {
+                console.error("Unexpected request status:", request.status);
+                alert("Error attempting logout")
+            }
+        } catch (error) {
+            console.error('Error:', error)
+        }
+    }
 });

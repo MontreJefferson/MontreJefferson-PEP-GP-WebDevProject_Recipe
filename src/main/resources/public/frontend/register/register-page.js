@@ -46,10 +46,24 @@ registerButton.onclick = processRegistration;
  */
 async function processRegistration() {
     // Implement registration logic here
+    let usernameValue = username.value;
+    let emailValue = email.value;
+    let passwordValue = password.value;
+    let repeatPasswordValue = repeatPassword.value;
 
-    // Example placeholder:
-    // const registerBody = { username, email, password };
-const requestOptions = {
+    // Check if fields are filled
+    if (usernameValue.trim().length < 1 || emailValue.trim().length < 1 || passwordValue.trim().length < 1){
+        alert("Fields must all be filled")
+        throw new Error("Fields must all be filled.")
+    }
+    // Check if passswords match
+    if (passwordValue != repeatPasswordValue){
+        alert("Passwords must match")
+        throw new Error("Passwords must match.")
+    }
+
+    const registerBody = { username, email, password };
+    const requestOptions = {
         method: "POST",
         mode: "cors",
         cache: "no-cache",
@@ -63,5 +77,29 @@ const requestOptions = {
         referrerPolicy: "no-referrer",
         body: JSON.stringify(registerBody)
     };
-    // await fetch(...)
+
+    try {
+        const request = new Request(`${BASE_URL}/register`, requestOptions);
+        
+        const response = await fetch(request);
+
+        if (response.status === 201) {
+            // Redirect user to login page
+            setTimeout(function() {
+                location.replace("/login");
+            }, 500);
+
+        } else if (response.status === 409){
+           // Alert that user/email already exists
+           alert("That email already exists")
+
+        } else {
+           // Alert generic registration error
+           alert("Error processing registration")
+        }
+        
+        console.log("Success:", result)
+    } catch (error) {
+        console.error('Error:', error)
+    }
 }

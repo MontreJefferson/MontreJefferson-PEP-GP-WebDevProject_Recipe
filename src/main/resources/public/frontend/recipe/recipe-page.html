@@ -16,13 +16,15 @@
 <body>
 
     <!-- TODO: Add a hidden link with id="admin-link" to navigate to the ingredients page (admin only) -->
-     <p style="display: none;" href="ingredient-page.html">To Ingredients Page (Admin Only)</p>
+     <p style="display: none;" id="admin-link" href="ingredient-page.html">To Ingredients Page (Admin Only)</p>
 
     <!-- TODO: Add a hidden Logout button with id="logout-button" -->
-     <button style="display: none;" id="admin-link">Admin Logout</button>
+     <button style="display: none;" id="logout-button">Logout</button>
 
     <!-- TODO: Add an h1 heading for the Recipe Management section -->
-     <h1>Recipe Management</h1>
+     <h1>Recipes</h1>
+
+
 
     <!-- 🔍 Search a Recipe -->
     <!-- 
@@ -32,7 +34,9 @@
         - Add button with id="search-button" and text "Search"
     -->
         <h2>Search a Recipe</h2>
-        <input type="text" id="search-input">
+        <form>
+            <input type="text" id="search-input">
+        </form>
         <button type="button" id="search-button">Search</button>
 
     <!-- 📋 Recipe List -->
@@ -42,6 +46,7 @@
         - Give it id="recipe-list"
     -->
         <ul id="recipe-list">
+
         </ul>
 
 
@@ -56,7 +61,7 @@
         <h2>Add a Recipe</h2>
         <input type="text" id="add-recipe-name-input">
         <textarea id="add-recipe-instructions-input"></textarea>
-        <button type="submit" id="add-recipe-submit-input">Search</button>
+        <button type="submit" id="add-recipe-submit-input">Add Recipe</button>
 
 
     <!-- ✏️ Update a Recipe -->

@@ -11,11 +11,16 @@ const BASE_URL = "http://localhost:8081"; // backend URL
  * - login button
  * - logout button (optional, for token testing)
  */
+let username = document.getElementById("login-input");
+let password = document.getElementById("password-input");
+let loginbutton = document.getElementById("login-button");
 
 /* 
  * TODO: Add click event listener to login button
  * - Call processLogin on click
  */
+
+loginbutton.onclick = processLogin;
 
 
 /**
@@ -42,8 +47,15 @@ const BASE_URL = "http://localhost:8081"; // backend URL
 async function processLogin() {
     // TODO: Retrieve username and password from input fields
     // - Trim input and validate that neither is empty
+    let usernameValue = username.value.trim();
+    let passwordValue = password.value.trim();
+
+    if(usernameValue.length < 1 || passwordValue.length < 1){
+        throw new Error("Fields cannot be empty.")
+    }
 
     // TODO: Create a requestBody object with username and password
+    const requestBody = { username: usernameValue, password: passwordValue };
 
     const requestOptions = {
         method: "POST",
@@ -62,6 +74,9 @@ async function processLogin() {
 
     try {
         // TODO: Send POST request to http://localhost:8081/login using fetch with requestOptions
+        const request = new Request(`${BASE_URL}/login`, requestOptions);
+
+        const response = await fetch(request);
 
         // TODO: If response status is 200
         // - Read the response as text
@@ -80,9 +95,29 @@ async function processLogin() {
         // TODO: For any other status code
         // - Alert the user with a generic error like "Unknown issue!"
 
+        if (response.status === 200) {
+            const text = await response.text();
+            let responseTextArray = text.split(" ");
+
+            sessionStorage.setItem("auth-token", responseTextArray[0])
+            sessionStorage.setItem("isAdmin", responseTextArray[1])
+            setTimeout(() => {
+                location.href = "../recipe/recipe-page.html";
+            }, 500);
+
+        } else if (response.status === 401){
+           // Incorrect Login alert
+           alert("Incorrect Login!")
+
+        } else {
+           // Unknown issue alert
+           alert("Unknown Issue!!!")
+        }
+
     } catch (error) {
         // TODO: Handle any network or unexpected errors
         // - Log the error and alert the user
+        console.error('Error:', error)
+        alert("Login Error")
     }
 }
-
