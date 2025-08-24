@@ -1,7 +1,7 @@
-commit d8fa80f656e46b7b1be8d8b2b135c85251dda3f9
+commit f06de097c0cba6e69162bd980b7014fbd24f15b1
 Author: Montre Jefferson <Jeffersonmontre@gmail.com>
-Date:   Thu Aug 21 22:25:49 2025 +0000
+Date:   Sun Aug 24 04:42:47 2025 +0000
 
-    continued html implementation and register page js
+    Furthered implementation of all scripts except ingredients-page.js so far
 
- 11 files changed, 149 insertions(+), 38 deletions(-)
+ 15 files changed, 638 insertions(+), 84 deletions(-)

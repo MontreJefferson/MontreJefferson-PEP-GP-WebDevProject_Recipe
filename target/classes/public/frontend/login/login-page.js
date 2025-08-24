@@ -81,7 +81,7 @@ async function processLogin() {
         // TODO: If response status is 200
         // - Read the response as text
         // - Response will be a space-separated string: "token123 true"
-        // - Split the string into token and isAdmin flag
+        // - Split the string into token and is-admin flag
         // - Store both in sessionStorage using sessionStorage.setItem()
 
         // TODO: Optionally show the logout button if applicable
@@ -100,7 +100,8 @@ async function processLogin() {
             let responseTextArray = text.split(" ");
 
             sessionStorage.setItem("auth-token", responseTextArray[0])
-            sessionStorage.setItem("isAdmin", responseTextArray[1])
+            sessionStorage.setItem("is-admin", responseTextArray[1])
+
             setTimeout(() => {
                 location.href = "../recipe/recipe-page.html";
             }, 500);
