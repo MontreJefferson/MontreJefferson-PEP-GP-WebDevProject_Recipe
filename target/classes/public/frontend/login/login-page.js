@@ -51,7 +51,8 @@ async function processLogin() {
     let passwordValue = password.value.trim();
 
     if(usernameValue.length < 1 || passwordValue.length < 1){
-        throw new Error("Fields cannot be empty.")
+        alert("Fields cannot be empty.")
+        return;
     }
 
     // TODO: Create a requestBody object with username and password
@@ -103,7 +104,7 @@ async function processLogin() {
             sessionStorage.setItem("is-admin", responseTextArray[1])
 
             setTimeout(() => {
-                location.href = "../recipe/recipe-page.html";
+                window.location.href = "../recipe/recipe-page.html";
             }, 500);
 
         } else if (response.status === 401){

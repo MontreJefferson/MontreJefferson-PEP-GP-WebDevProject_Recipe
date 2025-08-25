@@ -139,24 +139,18 @@ async function getIngredients() {
  */
 async function deleteIngredient() {
     let ingredientName = deleteIngredientNameInput.value.trim();
-
         if (ingredientName.length < 1) {
             //Error empty fields
             alert("Empty Field Error");
             return;
         }
-
-
     const requestOptions = {
         method: "DELETE",
         headers: {
-            "Authorization": `Bearer ${sessionStorage.getItem("auth-token")}`,
+            "Authorization": `Bearer ${sessionStorage.getItem("auth-token")}`
         },
     };
-    
     try {
-
-        //alert("Deleting with token:\n" + sessionStorage.getItem("auth-token"));
 
         const searchRequest = await fetch(`${BASE_URL}/ingredients?term=${encodeURIComponent(ingredientName)}`);
 

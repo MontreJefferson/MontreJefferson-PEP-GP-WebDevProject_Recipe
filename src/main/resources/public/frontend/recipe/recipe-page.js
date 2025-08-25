@@ -323,14 +323,14 @@ window.addEventListener("DOMContentLoaded", () => {
         };
 
         try {
-            const request = await fetch(`/logout`, requestOptions)
+            const request = await fetch(`${BASE_URL}/logout`, requestOptions)
 
             if (request.ok) {
                 // Clear session storage
                 sessionStorage.clear();
 
                 // Send to login page
-                location.replace("/login");
+                location.replace("../login/login-page.html");
 
             } else {
                 console.error("Unexpected request status:", request.status);
