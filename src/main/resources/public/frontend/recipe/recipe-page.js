@@ -10,46 +10,41 @@ let recipes = [];
 window.addEventListener("DOMContentLoaded", () => {
 
     /* 
-     * TODO: Get references to various DOM elements
+     * Get references to various DOM elements
      * - Recipe name and instructions fields (add, update, delete)
      * - Recipe list container
      * - Admin link and logout button
      * - Search input
     */
-    let addRecipeNameField = document.getElementById("add-recipe-name-input");
-    let addRecipeInstructionsField = document.getElementById("add-recipe-instructions-input");
-    let addRecipeSubmitButton = document.getElementById("add-recipe-submit-input");
-    let updateRecipeNameField = document.getElementById("update-recipe-name-input");
-    let updateRecipeInstructionsField = document.getElementById("update-recipe-instructions-input");
-    let updateRecipeSubmitButton = document.getElementById("update-recipe-submit-input");
-    let deleteRecipeNameField = document.getElementById("delete-recipe-name-input");
-    let deleteRecipieSubmitButton = document.getElementById("delete-recipe-submit-input");
-    let recipeList = document.getElementById("recipe-list");
-    let adminLink = document.getElementById("admin-link");
-    let logoutButton = document.getElementById("logout-button");
-    let searchInputField = document.getElementById("search-input");
-    let searchButton = document.getElementById("search-button")
+    const addRecipeNameField = document.getElementById("add-recipe-name-input");
+    const addRecipeInstructionsField = document.getElementById("add-recipe-instructions-input");
+    const addRecipeSubmitButton = document.getElementById("add-recipe-submit-input");
+    const updateRecipeNameField = document.getElementById("update-recipe-name-input");
+    const updateRecipeInstructionsField = document.getElementById("update-recipe-instructions-input");
+    const updateRecipeSubmitButton = document.getElementById("update-recipe-submit-input");
+    const deleteRecipeNameField = document.getElementById("delete-recipe-name-input");
+    const deleteRecipieSubmitButton = document.getElementById("delete-recipe-submit-input");
+    const recipeList = document.getElementById("recipe-list");
+    const adminLink = document.getElementById("admin-link");
+    const logoutButton = document.getElementById("logout-button");
+    const searchInputField = document.getElementById("search-input");
+    const searchButton = document.getElementById("search-button");
 
 
     /*
-     * TODO: Show logout button if auth-token exists in sessionStorage
+     * Show logout button if auth-token exists in sessionStorage
      */
 
-    if (sessionStorage.getItem('auth-token') != null) {
-        logoutButton.style.display = "block";
-    }
+    logoutButtonDisplayHandler();
 
     /*
-     * TODO: Show admin link if is-admin flag in sessionStorage is "true"
+     * Show admin link if is-admin flag in sessionStorage is "true"
      */
-    if (sessionStorage.getItem('is-admin') === "true") {
-        adminLink.style.display = "block";
-    }
-    //displayAdminLink();
+    adminLinkDisplayHandler();
 
 
     /*
-     * TODO: Attach event handlers
+     * Attach event handlers
      * - Add recipe button → addRecipe()
      * - Update recipe button → updateRecipe()
      * - Delete recipe button → deleteRecipe()
@@ -65,20 +60,20 @@ window.addEventListener("DOMContentLoaded", () => {
 
 
     /*
-     * TODO: On page load, call getRecipes() to populate the list
+     * On page load, call getRecipes() to populate the list
      */
     window.onload = () => getRecipes();
 
 
     /**
-     * TODO: Search Recipes Function
+     * Search Recipes Function
      * - Read search term from input field
      * - Send GET request with name query param
      * - Update the recipe list using refreshRecipeList()
      * - Handle fetch errors and alert user
      */
     async function searchRecipes() {
-        let searchInput = searchInputField.value
+        const searchInput = searchInputField.value
 
         const requestOptions = {
             method: "GET",
@@ -89,9 +84,14 @@ window.addEventListener("DOMContentLoaded", () => {
 
         try {
 
-            const request = await fetch(`${BASE_URL}/recipes?name=${encodeURIComponent(searchInput)}`, requestOptions)
+            const response = await fetch(`${BASE_URL}/recipes?name=${encodeURIComponent(searchInput)}`, requestOptions)
 
-            recipes = await request.json();
+            if(!response.ok){
+                alert("Failed to search for recipes")
+                return;
+            }
+
+            recipes = await response.json();
 
             refreshRecipeList();
 
@@ -101,7 +101,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     /**
-     * TODO: Add Recipe Function
+     * Add Recipe Function
      * - Get values from add form inputs
      * - Validate both name and instructions
      * - Send POST request to /recipes
@@ -109,8 +109,8 @@ window.addEventListener("DOMContentLoaded", () => {
      * - On success: clear inputs, fetch latest recipes, refresh the list
      */
     async function addRecipe() {
-        let recipeName = addRecipeNameField.value.trim();
-        let recipeInstructions = addRecipeInstructionsField.value.trim();
+        const recipeName = addRecipeNameField.value.trim();
+        const recipeInstructions = addRecipeInstructionsField.value.trim();
 
             if (recipeName.length < 1 || recipeInstructions.length < 1) {
                 //Error: Invalid fields
@@ -141,15 +141,17 @@ window.addEventListener("DOMContentLoaded", () => {
 
             } else {
                 console.error("Unexpected response status:", response.status);
+                alert("Failed to add recipe")
             }
 
         } catch (error) {
             console.error('Error:', error)
+            alert("Error adding recipe")
         }
     }
 
     /**
-     * TODO: Update Recipe Function
+     * Update Recipe Function
      * - Get values from update form inputs
      * - Validate both name and updated instructions
      * - Fetch current recipes to locate the recipe by name
@@ -157,8 +159,8 @@ window.addEventListener("DOMContentLoaded", () => {
      * - On success: clear inputs, fetch latest recipes, refresh the list
      */
     async function updateRecipe() {
-        let recipeName = updateRecipeNameField.value.trim();
-        let recipeInstructions = updateRecipeInstructionsField.value.trim();
+        const recipeName = updateRecipeNameField.value.trim();
+        const recipeInstructions = updateRecipeInstructionsField.value.trim();
 
             if (recipeName.length < 1 || recipeInstructions.length < 1) {
                 //Error: Invalid fields
@@ -198,28 +200,24 @@ window.addEventListener("DOMContentLoaded", () => {
                 
             } else {
                 console.error("Unexpected response status:", response.status);
+                alert("Failed to update recipe")
             }
 
         } catch (error) {
             console.error('Error:', error)
+            alert("Error updating recipe")
         }
     }
 
     /**
-     * TODO: Delete Recipe Function
+     * Delete Recipe Function
      * - Get recipe name from delete input
      * - Find matching recipe in list to get its ID
      * - Send DELETE request using recipe ID
      * - On success: refresh the list
      */
     async function deleteRecipe() {
-        let recipeName = deleteRecipeNameField.value.trim();
-
-        // Check if user is admin
-        if (sessionStorage.getItem('is-admin') !== "true") {
-            alert("You are not authorized to delete recipes.");
-            return;
-        }   
+        const recipeName = deleteRecipeNameField.value.trim();
 
         const requestOptions = {
             method: "DELETE",
@@ -251,14 +249,16 @@ window.addEventListener("DOMContentLoaded", () => {
 
             } else {
                 console.error("Unexpected response status:", request.status);
+                alert("Unexpected error encountered")
             }
         } catch (error) {
             console.error('Error:', error)
+            alert("Failed to delete recipe")
         }
     }
 
     /**
-     * TODO: Get Recipes Function
+     * Get Recipes Function
      * - Fetch all recipes from backend
      * - Store in recipes array
      * - Call refreshRecipeList() to display
@@ -273,24 +273,25 @@ window.addEventListener("DOMContentLoaded", () => {
         };
 
         try {
-            const request = await fetch(`${BASE_URL}/recipes`, requestOptions)
+            const response = await fetch(`${BASE_URL}/recipes`, requestOptions)
 
-            if (!request.ok) {
-                const errText = await request.text();
-                throw new Error(`Fetch failed: ${request.status} ${errText}`);
+            if(!response.ok){
+                alert("Failed to retrieve recipies")
+                return;
             }
 
-            recipes = await request.json();
+            recipes = await response.json();
 
             refreshRecipeList();
 
         } catch (error) {
             console.error('Error:', error)
+            alert("Failed to get recipes")
         }
     }
 
     /**
-     * TODO: Refresh Recipe List Function
+     * Refresh Recipe List Function
      * - Clear current list in DOM
      * - Create <li> elements for each recipe with name + instructions
      * - Append to list container
@@ -308,7 +309,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     /**
-     * TODO: Logout Function
+     * Logout Function
      * - Send POST request to /logout
      * - Use Bearer token from sessionStorage
      * - On success: clear sessionStorage and redirect to login
@@ -338,12 +339,19 @@ window.addEventListener("DOMContentLoaded", () => {
             }
         } catch (error) {
             console.error('Error:', error)
+            alert("Error attempting logout")
         }
     }
 
-    function displayAdminLink() {
+    function adminLinkDisplayHandler() {
         if (sessionStorage.getItem('is-admin') === "true") {
         adminLink.style.display = "block";
     }
+    
+    }
+    function logoutButtonDisplayHandler() {
+        if (sessionStorage.getItem('auth-token')) {
+            logoutButton.style.display = "block";
+        }
     }
 });

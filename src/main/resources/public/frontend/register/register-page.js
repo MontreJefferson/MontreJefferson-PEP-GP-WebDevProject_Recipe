@@ -8,11 +8,11 @@ const BASE_URL = "http://localhost:8081"; // backend URL
  * TODO: Get references to various DOM elements
  * - usernameInput, emailInput, passwordInput, repeatPasswordInput, registerButton
  */
-let username = document.getElementById("username-input");
-let email = document.getElementById("email-input");
-let password = document.getElementById("password-input");
-let repeatPassword = document.getElementById("repeat-password-input");
-let registerButton = document.getElementById("register-button");
+const username = document.getElementById("username-input");
+const email = document.getElementById("email-input");
+const password = document.getElementById("password-input");
+const repeatPassword = document.getElementById("repeat-password-input");
+const registerButton = document.getElementById("register-button");
 
 
 
@@ -46,20 +46,20 @@ registerButton.onclick = processRegistration;
  */
 async function processRegistration() {
     // Implement registration logic here
-    let usernameValue = username.value;
-    let emailValue = email.value;
-    let passwordValue = password.value;
-    let repeatPasswordValue = repeatPassword.value;
+    const usernameValue = username.value;
+    const emailValue = email.value;
+    const passwordValue = password.value;
+    const repeatPasswordValue = repeatPassword.value;
 
     // Check if fields are filled
     if (usernameValue.trim().length < 1 || emailValue.trim().length < 1 || passwordValue.trim().length < 1){
         alert("Fields must all be filled")
-        throw new Error("Fields must all be filled.")
+        return;
     }
     // Check if passswords match
     if (passwordValue != repeatPasswordValue){
         alert("Passwords must match")
-        throw new Error("Passwords must match.")
+        return;
     }
 
     const registerBody = { username, email, password };
@@ -79,9 +79,7 @@ async function processRegistration() {
     };
 
     try {
-        const request = new Request(`${BASE_URL}/register`, requestOptions);
-        
-        const response = await fetch(request);
+        const response = await fetch(`${BASE_URL}/register`, requestOptions);
 
         if (response.status === 201) {
             // Redirect user to login page
@@ -92,10 +90,12 @@ async function processRegistration() {
         } else if (response.status === 409){
            // Alert that user/email already exists
            alert("That email already exists")
+           return;
 
         } else {
            // Alert generic registration error
            alert("Error processing registration")
+           return
         }
         
         console.log("Success:", result)
