@@ -5,40 +5,43 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Recipe Management App</title>
     <link rel="stylesheet" href="login-page.css">
 </head>
+
 <body>
 
     <!-- Add main heading for the page -->
-     <h1>Login Page</h1>
+    <h1>Login Page</h1>
 
     <!-- Create an input field for username -->
     <!-- - Use <input> with id="login-input" and appropriate placeholder -->
-     <form>
+    <form>
         <Label for="login-input"> Username: </Label>
         <input type="text" id="login-input">
-     </form>
 
-    <!-- Create an input field for password -->
-    <!-- - Use <input type="password"> with id="password-input" -->
-     <form>
+
+        <!-- Create an input field for password -->
+        <!-- - Use <input type="password"> with id="password-input" -->
+
         <Label for="password-input"> Password: </Label>
         <input type="password" id="password-input">
-     </form>
+    </form>
 
     <!-- Create a login button -->
     <!-- - Use <button> with id="login-button" -->
-     <button type="submit" id="login-button">Login</button>
+    <button type="submit" id="login-button">Login</button>
 
     <!-- Add an optional hidden logout button with id="logout-button" -->
     <!-- - Can be revealed if needed during token testing or logout support -->
-     <button style="display: none;" type="button" id="logout-button">Logout</button>
+    <button style="display: none;" type="button" id="logout-button">Logout</button>
 
     <!-- Link JS script -->
     <script src="login-page.js"></script>
 </body>
+
 </html>

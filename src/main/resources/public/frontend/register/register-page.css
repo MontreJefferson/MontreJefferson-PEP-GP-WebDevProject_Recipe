@@ -17,13 +17,22 @@ input {
     border-radius: 5px;
 }
 
+input:focus {
+    border-color: #4f46e5;
+    box-shadow: 0 0 4px rgba(79, 70, 229, 0.5);
+    outline: none;
+}
+
 button {
     padding: 10px;
+    padding-right: 20px;
+    padding-left: 20px;
     background-color: #28a745;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    margin: 0 auto;
 }
 
 button:hover {
